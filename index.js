@@ -1,5 +1,6 @@
 import { Platform } from "./Platform.js";
 import { Player } from "./player.js";
+import platform from "./Images/platform.js";
 
 const canvas = document.getElementById('canvas');
 
@@ -26,8 +27,11 @@ const platforms = [
 	new Platform(context, 200, 300)
 ];
 
+let scrollOffset = 0; // How far have the platforms scrolled on the screen
+
 function animate() {
     requestAnimationFrame(animate);
+	console.log(`Player position: ${player.position.x}`);
     context.clearRect(0, 0, canvas.width, canvas.height);
     player.update();
 	for (const platform of platforms) {
@@ -36,18 +40,27 @@ function animate() {
 
     // Track and modify x velocity on key press
 	// Scroll background
-    if (keys.right.isPressed) {
+    if (keys.right.isPressed && player.position.x < 400) {
         player.velocity.x = 5;
-		for (const platform of platforms) {
-			platform.position.x -= 5;
-		}
 		
-    } else if (keys.left.isPressed) {
+    } else if (keys.left.isPressed && player.position.x > 100) {
         player.velocity.x = -5;
-		for (const platform of platforms) {
-			platform.position.x += 5;
+    } else {
+		player.velocity.x = 0;
+
+		if (keys.right.isPressed) { // Move platforms to left when moving right
+			scrollOffset += 5;
+			for (const platform of platforms) {
+				platform.position.x -= 5;
+			}
 		}
-    } else player.velocity.x = 0;
+		else if (keys.left.isPressed) { // Move platforms to right when moving left
+			scrollOffset -= 5;
+			for (const platform of platforms) {
+				platform.position.x += 5;
+			}
+		}
+	} 
 
     // Platform collision detection
 	platforms.forEach( (platform) => {
@@ -65,6 +78,10 @@ function animate() {
 			player.velocity.y = 0;
 		}
 	 });
+
+	 if (scrollOffset > 2000) { // Win scenario
+		console.log(`Win Scenario`);
+	 }
 
 	// Wall collision
 	// if (

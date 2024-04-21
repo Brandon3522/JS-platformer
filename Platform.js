@@ -1,10 +1,10 @@
 
 
 export class Platform {
-    constructor(context, x, y) {
+    constructor(context, xPosition, yPosition) {
         this.position = {
-            x: x,
-            y: y,
+            x: xPosition,
+            y: yPosition,
         };
         this.height = 20;
         this.width = 300;
